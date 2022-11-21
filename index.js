@@ -24,6 +24,7 @@ app.listen(port, () => {
 async function run() {
     try {
         const vegetableCollection = client.db('assignment-11').collection('vegetable');
+        const userReview = client.db('assignment-11').collection('review')
         app.get('/vegetable', async(req,res) =>{
           const query = {}
           const cursor = vegetableCollection.find(query);
@@ -41,12 +42,17 @@ async function run() {
         app.get('/vegetables/:id', async(req,res) =>{
            const id = req.params.id;
            const query = {_id: ObjectId(id)}
-           const vegetable = await vegetableCollection.find(query)
+           const vegetable = await vegetableCollection.findOne(query)
            res.send(vegetable)
+        })
+        app.post('/review', async(req,res) =>{
+           const review = req.body;
+           const result = await userReview.insertOne(review)
+           res.send(result)
         })
     }
     finally {
 
     }
 }
-run().catch(console.dir)
+run().catch(console.dir);
