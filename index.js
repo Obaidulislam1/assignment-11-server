@@ -50,6 +50,17 @@ async function run() {
            const result = await userReview.insertOne(review)
            res.send(result)
         })
+        app.get('/review', async(req,res) =>{
+            let query = {}
+            if(req.query.email){
+                query = {
+                    email: req.query.email
+                }
+            }
+            const cursor = userReview.find(query)
+            const review = await cursor.toArray();
+            res.send(review)
+        })
     }
     finally {
 
