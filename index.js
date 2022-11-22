@@ -25,46 +25,61 @@ async function run() {
     try {
         const vegetableCollection = client.db('assignment-11').collection('vegetable');
         const userReview = client.db('assignment-11').collection('review')
-        app.get('/vegetable', async(req,res) =>{
-          const query = {}
-          const cursor = vegetableCollection.find(query);
-          const vegetables = await cursor.limit(3).toArray();
-          res.send(vegetables);
+        app.get('/vegetable', async (req, res) => {
+            const query = {}
+            const cursor = vegetableCollection.find(query);
+            const vegetables = await cursor.limit(3).toArray();
+            res.send(vegetables);
         })
 
-        app.get('/vegetables', async(req,res) =>{
+        app.get('/vegetables', async (req, res) => {
             const query = {}
             const cursor = vegetableCollection.find(query);
             const vegetables = await cursor.toArray();
-          res.send(vegetables);
+            res.send(vegetables);
         })
 
-        app.get('/vegetables/:id', async(req,res) =>{
-           const id = req.params.id;
-           const query = {_id: ObjectId(id)}
-           const vegetable = await vegetableCollection.findOne(query)
-           res.send(vegetable)
+        app.get('/vegetables/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) }
+            const vegetable = await vegetableCollection.findOne(query)
+            res.send(vegetable)
         })
-        app.post('/review', async(req,res) =>{
-           const review = req.body;
-           const result = await userReview.insertOne(review)
-           res.send(result)
+        app.post('/review', async (req, res) => {
+            const review = req.body;
+            const result = await userReview.insertOne(review)
+            res.send(result)
         })
-        app.delete('/review/:id', async(req,res) =>{
-          const id = req.params.id;
-          const query =  {_id: ObjectId(id)};
-          const result = await userReview.deleteOne(query);
-          res.send(result)
+        app.delete('/review/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) };
+            const result = await userReview.deleteOne(query);
+            res.send(result)
         })
-        app.get('/review/:id', async(req,res) =>{
-             const id = req.params.id;
-             const query = {_id : ObjectId(id)}
-             const result = await userReview.findOne(query)
-             res.send(result)
+        app.get('/review/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) }
+            const result = await userReview.findOne(query)
+            res.send(result)
+
         })
-        app.get('/review', async(req,res) =>{
+        app.put('/review/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) };
+            const review = req.body;
+            const option = { upsert: true };
+            const updateReview = {
+                $set: {
+                    review: review.update
+                }
+            }
+            const result = await userReview.updateOne(query, updateReview, option)
+            res.send(result)
+        })
+
+        app.get('/review', async (req, res) => {
             let query = {}
-            if(req.query.email){
+            if (req.query.email) {
                 query = {
                     email: req.query.email
                 }
